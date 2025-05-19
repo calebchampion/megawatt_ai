@@ -23,3 +23,7 @@ venv/
 *.tmp
 .idea/
 .vscode/
+
+# testing files
+*test.py
+*_test.py 
