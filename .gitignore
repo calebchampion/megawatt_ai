@@ -1,0 +1,27 @@
+# python cache
+__pycache__/
+
+# data files from data folder
+data/slack
+data/google
+*.json
+*.csv
+
+# virtual environments
+.venv/
+env/
+venv/
+
+# logs & debugging
+*.log
+
+# environment config or secrets
+.env
+*.env
+
+# temporary files and editor folders
+*.swp
+*.swo
+*.tmp
+.idea/
+.vscode/
