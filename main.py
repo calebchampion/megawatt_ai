@@ -1,12 +1,18 @@
+'''
+main file to run everything together
+'''
+
 import os
 from pipeline.preprocessing.slack_indexer import SlackIndexer
 from pipeline.retrieval.database_connector import VectorSearcher
 
+#const
 DB_PATH = "database"
 SLACK_PATH = "data/slack/finance"
 
+#main
 def main():
-  # parses, indexes, and embeds slack messages into the database
+  #parses, indexes, and embeds slack messages into the database
   indexer = SlackIndexer(slack_dir = SLACK_PATH, db_path = DB_PATH)
   indexer.create_vector_store() # store the vector database
 
@@ -64,5 +70,6 @@ if __name__ == "__main__":
         engine.run()
 '''
 
+#conditional
 if __name__ == "__main__":
   main()

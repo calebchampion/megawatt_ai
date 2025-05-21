@@ -1,37 +1,37 @@
 '''
 Parse the data, then index it into a vector database with Chromadb
-Uses a huggingface model to embed the slack messages in a database
+Reads JSON files, chunks message data, embeds it 
+using huggingface model, the stores the vectors in chroma
 '''
+
 import os
 import json
 from typing import List, Dict
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.embeddings import HuggingFaceEmbeddings  # this model will eventually be updated to from fromlangchain_huggingface import HuggingFaceEmbeddings
+from langchain_community.embeddings import HuggingFaceEmbeddings  #this model will eventually be updated to from fromlangchain_huggingface import HuggingFaceEmbeddings
 #nothing else will change in the code
-from langchain_community.vectorstores import Chroma
+from langchain_community.vectorstores import Chroma #same with Chroma, it will throw a warning to a new model, it should be langchain-Chroma in the future
 from langchain_core.documents import Document
 
 class SlackIndexer:
-   def __init__(
-      self,
-      slack_dir: str,
-      db_path: str,
-      embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2", #model from huggingface, can replace with ollama it its better
-      chunk_size: int = 1000,
-      chunk_overlap: int = 200
-   ):
+   def __init__(self, slack_dir: str, db_path: str,
+               embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2", #model from huggingface, (text->vector) with semantic meaning
+               chunk_size: int = 1000,  #customizable
+               chunk_overlap: int = 200  #customizable
+               ):
 
       self.slack_dir = slack_dir
       self.db_path = db_path
       self.chunk_size = chunk_size
       self.chunk_overlap = chunk_overlap
       self.embedding_model = embedding_model
-      self.embeddings = HuggingFaceEmbeddings(model_name = self.embedding_model) 
-      self.vectorstore = None
+      self.embeddings = HuggingFaceEmbeddings(model_name = self.embedding_model)  #loads a pretrained model for semantic text emmbedding -> vectors
+      self.vectorstore = None  #vector database placeholder
 
-   # load messages from slack into a list of dictionaries
    def load_messages(self) -> List[Dict]:
+      #load messages from slack into a list of dictionaries ###########################################################Continue working on this for JSONS
       all_messages = []
+      #scans for all availible correct JSON data to use for RAG retrival
       for filename in os.listdir(self.slack_dir):
          if filename.endswith(".json"):
             path = os.path.join(self.slack_dir, filename)
@@ -48,7 +48,7 @@ class SlackIndexer:
                      thread_ts = message.get("thread_ts", ts)
                      is_reply = "parent_user_id" in message
 
-                     all_messages.append({
+                     all_messages.append({  #################################################################################
                         "text": text,
                         "filename": filename,
                         "user": user,
@@ -59,12 +59,13 @@ class SlackIndexer:
 
             except (json.JSONDecodeError, FileNotFoundError) as e: #error reading into file
                print(f"Error loading {filename}: {e}")
+
       print(f"Read {len(all_messages)} files correctly into all_messages")  #checking
       return all_messages
 
 
    def chunk_texts(self, messages: List[Dict]) -> List[Dict]:
-      # splits the loaded messages into smaller, more manageable chunks
+      #splits the loaded messages into smaller, more manageable chunks #################################################################
       text_splitter = RecursiveCharacterTextSplitter(
       chunk_size = self.chunk_size,
       chunk_overlap = self.chunk_overlap,
@@ -83,25 +84,26 @@ class SlackIndexer:
                "thread_ts": message["thread_ts"],
                "is_reply": message["is_reply"]
             })
+
       return chunks
   
-   # store in database of vectors
    def create_vector_store(self) -> Chroma:
-      # creates a Chroma vector store from the text chunks
-      if os.path.exists(os.path.join(self.db_path, "chroma.sqlite3")):
+      #creates a Chroma vector store from the text chunks with semantic embedding model
+      #make sure database doesnt exist already
+      if os.path.exists(os.path.join(self.db_path, "chroma.sqlite3")):  
          print(f"Vector store already exists at {self.db_path}, skipping indexing.")
-         self.vectorstore = Chroma(persist_directory = self.db_path, embedding_function = self.embeddings)
+         self.vectorstore = Chroma(persist_directory = self.db_path, embedding_function = self.embeddings)  #loads stored chroma db if exists
+
          return self.vectorstore
 
       print(f"Loading embedding model: {self.embedding_model}")
-      #import as `from :class:`~langchain_huggingface import HuggingFaceEmbeddings
-      #self.embeddings = HuggingFaceEmbeddings(model_name = self.embedding_model)   updated embeddings 
-      self.embeddings = HuggingFaceEmbeddings(model_name = self.embedding_model)
+      #self.embeddings = HuggingFaceEmbeddings(model_name = self.embedding_model)   updated embeddings package if needed later, it is the same
+      self.embeddings = HuggingFaceEmbeddings(model_name = self.embedding_model)  #########################################################this may be recursive, test tommorow
       print("Creating vector store...")
       messages = self.load_messages()
       chunks = self.chunk_texts(messages)
       documents = [
-         Document(
+         Document(   ##################################################pick what data i want
             page_content = chunk["text"],
             metadata = {
                "filename": chunk["filename"],
@@ -114,8 +116,8 @@ class SlackIndexer:
          for chunk in chunks
       ]
 
-      self.vectorstore = Chroma.from_documents(documents = documents, embedding = self.embeddings, persist_directory = self.db_path,)
-      self.vectorstore.persist()
+      self.vectorstore = Chroma.from_documents(documents = documents, embedding = self.embeddings, persist_directory = self.db_path)  #load db to 
+      self.vectorstore.persist()  #keep it on disk, in this version, i think it persists it anyways
       print(f"Vector store created and saved to {self.db_path}")
 
-      return self.vectorstore
+      return self.vectorstore  #####################################################may be able to just return true to save time
