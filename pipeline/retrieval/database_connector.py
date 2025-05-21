@@ -17,10 +17,8 @@ class VectorSearcher:
   def search(self, query: str, top_k: int = 5) -> List[Dict]:
     #takes a string, embeds it with embeddings model, then semanticly searches it with a k-map
     results = self.vectorstore.similarity_search(query, k = top_k)
-    # returns a list of LangChain documents w/ .page_content and .metadata as i have described in slack_indexer
     #.similarity_search(query: str, k=5) — to find the k most similar documents
-    #.as_retriever() — to use it in LangChain retrieval pipelines
-    return [  #################################################################################at a later date update this ^^^^ as well may use retriever
+    return [
             {
               "text": doc.page_content,
               "filename": doc.metadata.get("filename", "unknown"),
@@ -30,4 +28,4 @@ class VectorSearcher:
               "is_reply": doc.metadata.get("is_reply", False)
             }
           for doc in results
-    ]
+    ]  #returns a list of LangChain documents w/ .page_content and .metadata as i have described in slack_indexer

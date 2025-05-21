@@ -29,43 +29,47 @@ class SlackIndexer:
       self.vectorstore = None  #vector database placeholder
 
    def load_messages(self) -> List[Dict]:
-      #load messages from slack into a list of dictionaries ###########################################################Continue working on this for JSONS
+      #load messages from slack into a list of dictionaries
       all_messages = []
-      #scans for all availible correct JSON data to use for RAG retrival
-      for filename in os.listdir(self.slack_dir):
-         if filename.endswith(".json"):
-            path = os.path.join(self.slack_dir, filename)
-            try:
-               with open(path, "r", encoding = "utf-8") as f: # open the current JSON
-                  data = json.load(f)
 
-                  for message in data:
-                     text = message.get("text", "").strip()
-                     if not text:
-                        continue
-                     user = message.get("user_profile", {}).get("real_name") or message.get("user", "unknown")
-                     ts = message.get("ts", "")
-                     thread_ts = message.get("thread_ts", ts)
-                     is_reply = "parent_user_id" in message
+      for subdir in os.listdir(self.slack_dir):
+         if subdir.endswith(".json"):
+            continue
+         subdir_path = os.path.join(self.slack_dir, subdir)
+         if os.path.isdir(subdir_path):  # Ensure it's a folder
+            for filename in os.listdir(subdir_path):
+               if filename.endswith(".json"):
+                  path = os.path.join(subdir_path, filename)
+                  try:
+                     with open(path, "r", encoding="utf-8") as f:
+                        data = json.load(f)
 
-                     all_messages.append({  #################################################################################
-                        "text": text,
-                        "filename": filename,
-                        "user": user,
-                        "ts": ts,
-                        "thread_ts": thread_ts,
-                        "is_reply": is_reply
-                     })
+                        for message in data:
+                           text = message.get("text", "").strip()
+                           if not text:
+                              continue
+                           user = message.get("user_profile", {}).get("real_name") or message.get("user", "unknown")
+                           ts = message.get("ts", "")
+                           thread_ts = message.get("thread_ts", ts)
+                           is_reply = "parent_user_id" in message
 
-            except (json.JSONDecodeError, FileNotFoundError) as e: #error reading into file
-               print(f"Error loading {filename}: {e}")
-
-      print(f"Read {len(all_messages)} files correctly into all_messages")  #checking
+                           all_messages.append({
+                              "text": text,
+                              "filename": os.path.relpath(path, self.slack_dir),
+                              "user": user,
+                              "ts": ts,
+                              "thread_ts": thread_ts,
+                              "is_reply": is_reply
+                           })
+                  except (json.JSONDecodeError, FileNotFoundError) as e:
+                     print(f"Error loading {filename}: {e}")
+         print(f"Folder {subdir_path} done")
+      print(f"\nRead {len(all_messages)} messages from subfolders.")
       return all_messages
 
 
    def chunk_texts(self, messages: List[Dict]) -> List[Dict]:
-      #splits the loaded messages into smaller, more manageable chunks #################################################################
+      #splits the loaded messages into smaller, more manageable chunks
       text_splitter = RecursiveCharacterTextSplitter(
       chunk_size = self.chunk_size,
       chunk_overlap = self.chunk_overlap,
@@ -89,21 +93,12 @@ class SlackIndexer:
   
    def create_vector_store(self) -> Chroma:
       #creates a Chroma vector store from the text chunks with semantic embedding model
-      #make sure database doesnt exist already
-      if os.path.exists(os.path.join(self.db_path, "chroma.sqlite3")):  
-         print(f"Vector store already exists at {self.db_path}, skipping indexing.")
-         self.vectorstore = Chroma(persist_directory = self.db_path, embedding_function = self.embeddings)  #loads stored chroma db if exists
-
-         return self.vectorstore
-
       print(f"Loading embedding model: {self.embedding_model}")
-      #self.embeddings = HuggingFaceEmbeddings(model_name = self.embedding_model)   updated embeddings package if needed later, it is the same
-      self.embeddings = HuggingFaceEmbeddings(model_name = self.embedding_model)  #########################################################this may be recursive, test tommorow
       print("Creating vector store...")
       messages = self.load_messages()
       chunks = self.chunk_texts(messages)
       documents = [
-         Document(   ##################################################pick what data i want
+         Document(
             page_content = chunk["text"],
             metadata = {
                "filename": chunk["filename"],
@@ -120,4 +115,4 @@ class SlackIndexer:
       self.vectorstore.persist()  #keep it on disk, in this version, i think it persists it anyways
       print(f"Vector store created and saved to {self.db_path}")
 
-      return self.vectorstore  #####################################################may be able to just return true to save time
+      return

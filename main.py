@@ -5,71 +5,35 @@ main file to run everything together
 import os
 from pipeline.preprocessing.slack_indexer import SlackIndexer
 from pipeline.retrieval.database_connector import VectorSearcher
+from pipeline.rag_engine import OllamaLLM
 
 #const
 DB_PATH = "database"
-SLACK_PATH = "data/slack/finance"
+SLACK_PATH = "data/slack/Megawatt Slack export May 1 2019 - May 19 2025"
 
 #main
 def main():
   #parses, indexes, and embeds slack messages into the database
-  indexer = SlackIndexer(slack_dir = SLACK_PATH, db_path = DB_PATH)
-  indexer.create_vector_store() # store the vector database
+  #if there is a database already
+  if os.path.exists(os.path.join(DB_PATH, "chroma.sqlite3")): 
+    print("\nDatabase already exists. Skipping indexing.\n")
+
+  else: #make a database for it
+    indexer = SlackIndexer(slack_dir = SLACK_PATH, db_path = DB_PATH)
+    indexer.create_vector_store() # store the vector database
 
   #ask user what requests they want out of the RAG AI model
+  RAG_searcher = VectorSearcher(db_path = DB_PATH)  #load model object in beforehand so it doesnt load every time
   while True:
-    query = input("What can I help you with?\n")
-    RAG_searcher = VectorSearcher(db_path = DB_PATH)
-    top_k_results = RAG_searcher.search(query = query, top_k = 5) #searches and responds with top 5 k-map slack messages
-    print(f"top 5 slack messages: {top_k_results}")
+    query = input("What can I help you with? -> ")
+    if query.lower() == "exit":
+      break
+    top_k_results = RAG_searcher.search(query = query, top_k = 20) #searches and responds with top 10 k-map slack messages
+    print(f"\ntop 5 slack messages: \n\n{top_k_results}")
 
+    LLM = OllamaLLM()  #pick from any model model = "llama3.2" as default
+    stream = LLM.generate_with_context(query = query, top_5 = top_k_results)
 
-
-'''
-class SlackSearchEngine:
-    def __init__(self, slack_dir = "slack_messages", db_path = "chroma_db", model = "sentence-transformers/all-MiniLM-L6-v2"):
-        self.slack_dir = slack_dir
-        self.db_path = db_path
-        self.model = model
-        self.indexer = SlackIndexer(slack_dir, db_path, model)
-
-    def setup(self):
-        if not os.path.exists(self.db_path):
-            print("Creating new vector store...")
-            self.indexer.create_vectorstore()
-        else:
-            print("Loading existing vector store...")
-            self.indexer.load_vectorstore()
-
-    def run(self):
-        self.setup()
-        searcher = VectorSearcher(self.db_path, self.model)
-        print("\n--- Slack Message Search Engine Ready ---")
-        while True:
-            query = input("\nEnter your query (or 'exit' to quit): ")
-            if query.lower() == "exit":
-                break
-            results = searcher.search(query )
-            if results:
-                print("\nTop Matches:")
-                for i, res in enumerate(results, 1):
-                    print(f"\n[{i}] From: {res['filename']}")
-                    print(f"    {res['text'][:200]}...")
-            else:
-                print("No relevant messages found.")
-
-
-
-
-
-if __name__ == "__main__":
-    engine = SlackSearchEngine()
-    if not os.path.exists(engine.slack_dir):
-        print(f"Error: Directory '{engine.slack_dir}' not found.")
-    else:
-        engine.run()
-'''
-
-#conditional
+#run
 if __name__ == "__main__":
   main()
