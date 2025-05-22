@@ -8,14 +8,14 @@ import os
 import json
 from typing import List, Dict
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.embeddings import HuggingFaceEmbeddings  #this model will eventually be updated to from fromlangchain_huggingface import HuggingFaceEmbeddings
+#from langchain_community.embeddings import HuggingFaceEmbeddings  #this model will eventually be updated to from fromlangchain_huggingface import HuggingFaceEmbeddings
 #nothing else will change in the code
 from langchain_community.vectorstores import Chroma #same with Chroma, it will throw a warning to a new model, it should be langchain-Chroma in the future
 from langchain_core.documents import Document
 
 class SlackIndexer:
    def __init__(self, slack_dir: str, db_path: str,
-               embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2", #model from huggingface, (text->vector) with semantic meaning
+               embeddings, #model from huggingface, (text->vector) with semantic meaning
                chunk_size: int = 1000,  #customizable
                chunk_overlap: int = 200  #customizable
                ):
@@ -24,8 +24,7 @@ class SlackIndexer:
       self.db_path = db_path
       self.chunk_size = chunk_size
       self.chunk_overlap = chunk_overlap
-      self.embedding_model = embedding_model
-      self.embeddings = HuggingFaceEmbeddings(model_name = self.embedding_model)  #loads a pretrained model for semantic text emmbedding -> vectors
+      self.embeddings = embeddings
       self.vectorstore = None  #vector database placeholder
 
    def load_messages(self) -> List[Dict]:

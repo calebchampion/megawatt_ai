@@ -3,6 +3,7 @@ main file to run everything together
 '''
 
 import os
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from pipeline.preprocessing.indexer import SlackIndexer, GoogleIndexer
 from pipeline.retrieval.database_connector import VectorSearcher
 from pipeline.rag_engine import OllamaLLM
@@ -13,17 +14,26 @@ SLACK_PATH = "data/slack/Megawatt Slack export May 1 2019 - May 19 2025"
 
 #main
 def main():
-  #parses, indexes, and embeds slack messages into the database
-  #if there is a database already
+  '''load preloaded ai embedding model
+  '''
+  embedding_model = HuggingFaceEmbeddings(model_name = "sentence-transformers/all-MiniLM-L6-v2")
+
+
+
+  '''parses and indexes into vector db if needed
+  '''
   if os.path.exists(os.path.join(DB_PATH, "chroma.sqlite3")): 
     print("\nDatabase already exists. Skipping indexing.\n")
 
   else: #make a database for it
-    indexer = SlackIndexer(slack_dir = SLACK_PATH, db_path = DB_PATH)
+    indexer = SlackIndexer(slack_dir = SLACK_PATH, db_path = DB_PATH, embeddings = embedding_model)
     indexer.create_vector_store() # store the vector database
 
-  #ask user what requests they want out of the RAG AI model
-  RAG_searcher = VectorSearcher(db_path = DB_PATH)  #load model object in beforehand so it doesnt load every time
+
+
+  '''query and prompt ai model
+  '''
+  RAG_searcher = VectorSearcher(db_path = DB_PATH, embeddings = embedding_model)  #load model object in beforehand so it doesnt load every time
   while True:
     query = input("What can I help you with? -> ")
     if query.lower() == "exit":
@@ -34,6 +44,9 @@ def main():
     LLM = OllamaLLM()  #pick from any model model = "llama3.2" as default
     stream = LLM.generate_with_context(query = query, recieved_data = top_k_results)
 
+
+
 #run
 if __name__ == "__main__":
   main()
+
