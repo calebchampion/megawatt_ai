@@ -3,7 +3,7 @@ main file to run everything together
 '''
 
 import os
-from pipeline.preprocessing.slack_indexer import SlackIndexer
+from pipeline.preprocessing.indexer import SlackIndexer, GoogleIndexer
 from pipeline.retrieval.database_connector import VectorSearcher
 from pipeline.rag_engine import OllamaLLM
 
@@ -32,7 +32,7 @@ def main():
     print(f"\ntop 5 slack messages: \n\n{top_k_results}")
 
     LLM = OllamaLLM()  #pick from any model model = "llama3.2" as default
-    stream = LLM.generate_with_context(query = query, top_5 = top_k_results)
+    stream = LLM.generate_with_context(query = query, recieved_data = top_k_results)
 
 #run
 if __name__ == "__main__":

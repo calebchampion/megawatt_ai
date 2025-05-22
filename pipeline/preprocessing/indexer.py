@@ -116,3 +116,9 @@ class SlackIndexer:
       print(f"Vector store created and saved to {self.db_path}")
 
       return
+   
+
+
+class GoogleIndexer:
+   def __init__(self):
+      pass
