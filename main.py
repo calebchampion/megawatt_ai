@@ -4,6 +4,7 @@ main file to run everything together
 
 import os
 from langchain_community.embeddings import HuggingFaceEmbeddings
+
 from pipeline.preprocessing.indexer import SlackIndexer, GoogleIndexer
 from pipeline.retrieval.database_connector import VectorSearcher
 from pipeline.rag_engine import OllamaLLM
@@ -22,7 +23,7 @@ def main():
     print("\nDatabase already exists. Skipping indexing.\n")
 
   else: #make a database for it
-    indexer = SlackIndexer(slack_dir = ZIP_PATH, db_path = DB_PATH, embeddings = EMBEDDING_MODEL)
+    indexer = SlackIndexer(slack_dir = ZIP_PATH, db_path = DB_PATH, embeddings = EMBEDDING_MODEL)  #optional chunk size and overlap parameters as well
     indexer.create_vector_store() # store the vector database
 
 
@@ -35,12 +36,10 @@ def main():
     if query.lower() == "exit":
       break
     top_k_results = RAG_searcher.search(query = query, top_k = 20) #searches and responds with top 10 k-map slack messages
-    #print(f"\ntop 5 slack messages: \n\n{top_k_results}")
+    print(f"\ntop 5 slack messages: \n\n{top_k_results}")
 
     LLM = OllamaLLM()  #pick from any model model = "llama3.2" as default
-    stream = LLM.generate_with_context(query = query, recieved_data = top_k_results)
-
-
+    LLM.generate_with_context(query = query, recieved_data = top_k_results)
 
 #run
 if __name__ == "__main__":

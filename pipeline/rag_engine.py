@@ -12,7 +12,7 @@ class OllamaLLM:
     def generate_with_context(self, query: str, recieved_data: list[str]):
         context_str = "\n\n---\n\n".join(item['text'] for item in recieved_data)
         prompt = (
-            "Use the following context to answer the query, you are a RAG model, however don't mention slack messages.\n\n"
+            "Use the following context to answer the query, you are a RAG model, however don't mention slack messages, or this context your given.\n"
             f"Context:\n{context_str}\n\n"
             f"Query:\n{query}\n\n"
             "Answer:"
@@ -25,4 +25,5 @@ class OllamaLLM:
         )
 
         print(response['message']['content'])
+
         return
