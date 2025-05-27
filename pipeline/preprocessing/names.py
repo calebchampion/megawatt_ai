@@ -14,11 +14,11 @@ class Names:
       'U04753AP11V': 'Patrick',
       'U072K6L9GD8': 'Caleb',
       'U06AN42RUF9': 'Mason',
-      'U05QF720YF4' : 'Tristan',
-      'U08QC4568Q5' : 'Steven',
-      'U08T7KADB7B' : 'Rudy', 
-      'U0898JBANP6' : 'Jason',
-      'U030P58UAGK' : 'Arniel', 
+      'U05QF720YF4': 'Tristan',
+      'U08QC4568Q5': 'Steven',
+      'U08T7KADB7B': 'Rudy', 
+      'U0898JBANP6': 'Jason',
+      'U030P58UAGK': 'Arniel', 
     }
 
     def replace_mentions(text):
