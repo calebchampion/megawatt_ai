@@ -21,11 +21,9 @@ class VectorSearcher:
     results = [
             {
               "text": doc.page_content,
-              "filename": doc.metadata.get("filename", "unknown"),
               "user": doc.metadata.get("user", "unknown"),
               "ts": doc.metadata.get("ts", ""),
               "thread_ts": doc.metadata.get("thread_ts", ""),
-              "is_reply": doc.metadata.get("is_reply", False)
             }
           for doc in results
     ]  #returns a list of LangChain documents w/ .page_content and .metadata as i have described in slack_indexer

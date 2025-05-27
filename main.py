@@ -11,14 +11,15 @@ from pipeline.rag_engine import OllamaLLM
 
 #const
 DB_PATH = "database"
-SLACK_PATH = "data/slack/mwzipp.zip"
+SLACK_PATH = "data/slack/mw"
 GOOGLE_PATH = "data/google/googledata"
 EMBEDDING_MODEL = HuggingFaceEmbeddings(model_name = "sentence-transformers/all-MiniLM-L6-v2")
 
 #main
 def main():
 
-  '''parses and indexes into vector db if needed
+  '''
+  parses and indexes into vector db if needed
   '''
   if os.path.exists(os.path.join(DB_PATH, "chroma.sqlite3")): 
     print("\nDatabase already exists. Skipping indexing.\n")
@@ -28,7 +29,8 @@ def main():
     indexer.create_vector_store() # store the vector database
 
 
-  '''query and prompt ai model
+  '''
+  query and prompt ai model
   '''
   RAG_searcher = VectorSearcher(db_path = DB_PATH, embeddings = EMBEDDING_MODEL)  #load model object in beforehand so it doesnt load every time
   while True:
@@ -36,7 +38,7 @@ def main():
     if query.lower() == "exit":
       break
     
-    top_k_results = RAG_searcher.search(query = query, top_k = 5) #searches and responds with top 10 k-map slack messages
+    top_k_results = RAG_searcher.search(query = query, top_k = 15) #searches and responds with top 10 k-map slack messages
     #names
     print(f"\ntop 5 slack messages: \n\n{top_k_results}")
 
