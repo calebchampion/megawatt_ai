@@ -17,13 +17,11 @@ from langchain_community.document_loaders import SlackDirectoryLoader
 class SlackIndexer:
    def __init__(self, slack_dir: str, db_path: str,
                embeddings, #model from huggingface, (text->vector) with semantic meaning
-               google_dir: str = "data/google",
                chunk_size: int = 1000,  #customizable
                chunk_overlap: int = 200  #customizable
                ):
 
       self.slack_dir = slack_dir
-      self.google_dir = google_dir
       self.db_path = db_path
       self.chunk_size = chunk_size
       self.chunk_overlap = chunk_overlap
@@ -49,5 +47,13 @@ class SlackIndexer:
 
 
 class GoogleIndexer:
-   def __init__(self):
-      pass 
+   def __init__(self, google_dir: str, db_path: str, embeddings, chunk_size: int = 1000, chunck_overlap: int = 200):
+      self.google_dir = google_dir
+      self.db_path = db_path
+      self.embeddings = embeddings
+      self.chunk_size = chunk_size
+      self.chunk_overlap = chunck_overlap
+      self.vector_store = None
+   
+   def add_vector_store(self):
+      pass

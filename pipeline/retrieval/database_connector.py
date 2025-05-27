@@ -6,7 +6,8 @@ search over stored documents using a HuggingFace sentence transformer model.
 
 from typing import List, Dict
 from langchain_community.vectorstores import Chroma #db used to store vectors
- 
+from pipeline.preprocessing.names import Names
+
 class VectorSearcher:
   def __init__(self, db_path: str, embeddings):  #embedding model can change to many different ones to test out
     self.db_path = db_path
@@ -17,7 +18,7 @@ class VectorSearcher:
     #takes a string, embeds it with embeddings model, then semanticly searches it with a k-map
     results = self.vectorstore.similarity_search(query, k = top_k)
     #.similarity_search(query: str, k=5) — to find the k most similar documents
-    return [
+    results = [
             {
               "text": doc.page_content,
               "filename": doc.metadata.get("filename", "unknown"),
@@ -28,3 +29,7 @@ class VectorSearcher:
             }
           for doc in results
     ]  #returns a list of LangChain documents w/ .page_content and .metadata as i have described in slack_indexer
+
+    n = Names(results).replace_IDs_w_names()
+    
+    return results
