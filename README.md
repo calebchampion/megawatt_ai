@@ -9,26 +9,51 @@ An AI-powered onboarding assistant that helps new employees get up to speed by a
 - *[Flask](https://flask.palletsprojects.com/en/stable/)* – API
 - *[Docker](https://www.docker.com/)* – Containerized deployment
 
-### Main
-main file and how it works
-### Pipeline
-#### Preprocessing
-Indexer files and how it works
-#### Retrievel
-Searcher and how it works
-#### RAG Engine
-RAG model file and how it works
+### Main File
+The main.py file runs everything together.
+There are initial constants at the beggining like the database, slack, and google path.  These are used throughout, so they are easy to reconfigure.  The embedding model is also listed here and can be changed eaily as well.  (Take note if the embedding model changes, it may require you to also recalulate the entire database)
+- **Indexer**
+```python
+class SlackIndexer:
+   def __init__(self,
+               slack_dir: str,
+               db_path: str,
+               embeddings,
+               chunk_size: int = 1000,
+               chunk_overlap: int = 200
+               ):
+```
+- **Database Connector**
+```python
+class VectorSearcher:
+  def __init__(self,
+              db_path: str,
+              embeddings
+              ):
+```
+- **RAG Engine**
+```python
+class OllamaLLM:
+    def __init__(self, model: str = "llama3.2"):
+```
+### Pipeline Folder
+This folder has subfolders and a rag engine to do the heavy lifting and computation of the chatbot.
+#### Preprocessing Folder
+- **Embedding**: The indexer.py file inside this folder has two classes, one for Slack and one for Google.  These classes both go to the data/slack/ and data/google/ folders and read the given data into the program.  Then the data gets indexed and vectorized into a Chroma vector database.  The vectorization is done be a HuggingFace model that embeds the semantic meaning of text into the databse.
+- **Storing**: The vector database is a Chromadb and is stored in database/ folder.  This database can then be seached through to find the nearest k-map of vectors from a query later on.
+#### Retrievel Folder
+This folder has a file called database_connector.py that can searches the database just above.  This also uses the embedding model to embed the query into a vector.  Then it uses a k-map to search for the closest corresponding results, fulfilling the retrieval part of the RAG mode.
+#### RAG Engine File
+This file rag_engine.py connects the two parts above to import the data, put it into a vector database, then query through it for searches.  The rag engine takes a query, give it to the retrieval to search for slack and google responses about the query, then promps the Ollama model to repond based on the retreived context and the initial query.  Then it prints out the reponse.
 
-### Interface
+### Interface Folder
 Flask and how it works
 
-### Deploy
+### Deploy Folder
 Docker files and how it works
-'''bash
+```bash
 pip install -r requirements
-'''
-
-
+```
 ## Setup Instructions
 - Unzip slack data into data/slack folder and label it "mw"
 - 
