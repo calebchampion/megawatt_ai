@@ -24,6 +24,14 @@ Flask and how it works
 
 ### Deploy
 Docker files and how it works
+'''bash
+pip install -r requirements
+'''
+
 
 ## Setup Instructions
-Docker stuff
+- Unzip slack data into data/slack folder and label it "mw"
+- 
+### Adding Data to the model
+- Slack data: 
+- Google data: 
