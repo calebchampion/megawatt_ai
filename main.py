@@ -38,7 +38,7 @@ def main():
     if query.lower() == "exit":
       break
     
-    top_k_results = RAG_searcher.search(query = query, top_k = 15) #searches and responds with top 10 k-map slack messages
+    top_k_results = RAG_searcher.search(query = query, top_k = 10) #searches and responds with top 10 k-map slack messages
     #names
     print(f"\ntop 5 slack messages: \n\n{top_k_results}")
 
