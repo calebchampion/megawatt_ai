@@ -2,22 +2,23 @@
 __pycache__/
 
 # data files from data folder
-data/slack
-data/google
-*.json
-*.csv
+data/slack/**
+!data/slack/.gitkeep
+data/google/**
+!data/google/.gitkeep
+
+
+#databases
+database/**
+!database/.gitkeep
 
 # virtual environments
 .venv/
-env/
-venv/
+.env
+*.env
 
 # logs & debugging
 *.log
-
-# environment config or secrets
-.env
-*.env
 
 # temporary files and editor folders
 *.swp
@@ -25,3 +26,7 @@ venv/
 *.tmp
 .idea/
 .vscode/
+
+# testing files
+*test.py
+*_test.py
