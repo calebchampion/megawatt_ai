@@ -14,6 +14,7 @@ DB_PATH = "database"
 SLACK_PATH = "data/slack/mw"
 GOOGLE_PATH = "data/google/googledata"
 EMBEDDING_MODEL = HuggingFaceEmbeddings(model_name = "sentence-transformers/all-MiniLM-L6-v2")
+LLM_MODEL = "llama3.2"
 
 #main
 def main():
