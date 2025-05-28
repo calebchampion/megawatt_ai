@@ -6,7 +6,7 @@ search over stored documents using a HuggingFace sentence transformer model.
 
 from typing import List, Dict
 from langchain_community.vectorstores import Chroma #db used to store vectors
-from pipeline.preprocessing.names import Names
+from pipeline.retrieval.names import Names
 
 class VectorSearcher:
   def __init__(self, db_path: str, embeddings):  #embedding model can change to many different ones to test out
