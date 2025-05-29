@@ -1,17 +1,26 @@
 # Megawatt Onboarding AI Chatbot
-An AI-powered onboarding assistant that helps new employees get up to speed by answering questions using company data from Slack messages, emails, and internal wiki pages.  Powered by a local RAG (Retrieval-Augmented Generation) pipeline with LangChain, Chroma, and an Ollama-hosted LLM.
+> An AI-powered onboarding assistant that helps new employees get up to speed by answering questions using company data from Slack messages, emails, and internal wiki pages.  Powered by a local RAG (Retrieval-Augmented Generation) pipeline with LangChain, Chroma, and an Ollama-hosted LLM.
 
 ## Architecture
-- *[LangChain](https://www.langchain.com/)* – RAG orchestration
-- *[ChromaDB](https://www.trychroma.com/)* – Local vector database
-- *[Ollama](https://ollama.com/)* – Local LLM hosting (default -> LLaMA 3.2)
-- *[HuggingFace](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2)* - Embedding Model
-- *[Flask](https://flask.palletsprojects.com/en/stable/)* – API
-- *[Docker](https://www.docker.com/)* – Containerized deployment
+![Architecture](architecture.png)
+
+**Overview** (*How it works*): 
+1. Company data is preprocessed and embedded into a local vector database.
+2. A user submits a query to the chatbot.
+3. The chatbot embeds the query and performs a similarity search in the vector database.
+4. The retrieved context and query are passed to a local LLM (Ollama) to generate an accurate and context-aware response.
+
+
+**Tools Used**
+- **Embedding & Vector Store**: [HuggingFace Transformers](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2), [ChromaDB](https://www.trychroma.com/)
+- **RAG Orchestration**: [LangChain](https://www.langchain.com/)
+- **Local LLM**: [Ollama](https://ollama.com/) – LLaMA 3.2
+- **Backend**: [Flask](https://flask.palletsprojects.com/en/stable/)
+- **Deployment**: [Docker](https://www.docker.com/)
 
 ### Main File
-The main.py file runs everything together.
-There are initial constants at the beggining like the database, slack, and google path.  These are used throughout, so they are easy to reconfigure.  The embedding model is also listed here and can be changed eaily as well.  (Take note if the embedding model changes, it may require you to also recalulate the entire database)
+The `main.py` file runs everything together.
+There are initial constants at the beginning of the file like the database, slack, and google path.  These are used throughout, so they are easy to reconfigure.  The embedding model is also listed here and can be changed easily as well.  (Take note if the embedding model changes, it may require you to also recalculate the entire database).  I've listed the classes I've made and used here in the main file.
 - **Indexer**
 ```python
 class SlackIndexer:
@@ -38,13 +47,14 @@ class OllamaLLM:
 ```
 ### Pipeline Folder
 This folder has subfolders and a rag engine to do the heavy lifting and computation of the chatbot.
-#### Preprocessing Folder
-- **Embedding**: The indexer.py file inside this folder has two classes, one for Slack and one for Google.  These classes both go to the data/slack/ and data/google/ folders and read the given data into the program.  Then the data gets indexed and vectorized into a Chroma vector database.  The vectorization is done be a HuggingFace model that embeds the semantic meaning of text into the databse.
-- **Storing**: The vector database is a Chromadb and is stored in database/ folder.  This database can then be seached through to find the nearest k-map of vectors from a query later on.
-#### Retrievel Folder
-This folder has a file called database_connector.py that can searches the database just above.  This also uses the embedding model to embed the query into a vector.  Then it uses a k-map to search for the closest corresponding results, fulfilling the retrieval part of the RAG mode.
-#### RAG Engine File
-This file rag_engine.py connects the two parts above to import the data, put it into a vector database, then query through it for searches.  The rag engine takes a query, give it to the retrieval to search for slack and google responses about the query, then promps the Ollama model to repond based on the retreived context and the initial query.  Then it prints out the reponse.
+###### Preprocessing Folder
+- **Embedding**: The `indexer.py` file inside this folder has two classes, one for Slack and one for Google.  These classes both go to the `data/slack/` and `data/google/` folders and read the given data into the program.  Then the data gets indexed and vectorized into a Chroma vector database.  The vectorization is done by a HuggingFace model that embeds the semantic meaning of text into the database.
+- **Storing**: The vector database is a Chromadb and is stored in `database/ folder`.  This database can then be searched through to find the nearest k-map of vectors from a query later on.
+###### Retrievel Folder
+- `database_connector.py` handles vector similarity search.
+- The query is embedded and used to retrieve the top-k most relevant vectors using cosine similarity.
+###### RAG Engine File
+- `rag_engine.py` connects everything: it receives a query, retrieves relevant context, and prompts the Ollama LLM to return a final answer.
 
 ### Interface Folder
 Flask and how it works
@@ -57,6 +67,6 @@ pip install -r requirements
 ## Setup Instructions
 - Unzip slack data into data/slack folder and label it "mw"
 - 
-### Adding Data to the model
+#### Adding Data to the model
 - Slack data: 
 - Google data: 
