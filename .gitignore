@@ -4,9 +4,9 @@ __pycache__/
 # data files from data folder
 data/slack/**
 !data/slack/.gitkeep
+
 data/google/**
 !data/google/.gitkeep
-
 
 #databases
 database/**

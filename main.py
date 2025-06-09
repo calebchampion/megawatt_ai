@@ -13,8 +13,8 @@ from pipeline.rag_engine import OllamaLLM
 DB_PATH = "database"
 SLACK_PATH = "data/slack/mw"
 GOOGLE_PATH = "data/google/googledata"
-EMBEDDING_MODEL = HuggingFaceEmbeddings(model_name = "sentence-transformers/all-MiniLM-L6-v2")
-LLM_MODEL = "llama3.2"
+EMBEDDING_MODEL = HuggingFaceEmbeddings(model_name = "sentence-transformers/all-MiniLM-L6-v2")  #sentence-transformers/all-MiniLM-L6-v2
+LLM_MODEL = "llama3.2" 
 
 #main
 def main():
@@ -33,18 +33,19 @@ def main():
   '''
   query and prompt ai model
   '''
-  RAG_searcher = VectorSearcher(db_path = DB_PATH, embeddings = EMBEDDING_MODEL)  #load model object in beforehand so it doesnt load every time
+  RAG_searcher = VectorSearcher(db_path = DB_PATH, embeddings = EMBEDDING_MODEL)   #classes objects so they dont load every time a questions asked
+  LLM = OllamaLLM(model = LLM_MODEL)  #pick from any model model = "llama3.2" as default, qwen2.5:3b
+
   while True:
     query = input("\nWhat can I help you with? -> ")
     if query.lower() == "exit":
       break
-    
-    top_k_results = RAG_searcher.search(query = query, top_k = 10) #searches and responds with top 10 k-map slack messages
-    #names
-    print(f"\ntop 5 slack messages: \n\n{top_k_results}")
 
-    LLM = OllamaLLM()  #pick from any model model = "llama3.2" as default
+    top_k_results = RAG_searcher.search(query = query, top_k = 5) #searches and responds with top 10 k-map slack messages
+
+    #names
     LLM.generate_with_context(query = query, recieved_data = top_k_results)
+
 
 #run
 if __name__ == "__main__":
