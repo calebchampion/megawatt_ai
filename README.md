@@ -49,7 +49,7 @@ class OllamaLLM:
 This folder has subfolders and a rag engine to do the heavy lifting and computation of the chatbot.
 ###### Preprocessing Folder
 - **Embedding**: The `indexer.py` file inside this folder has two classes, one for Slack and one for Google.  These classes both go to the `data/slack/` and `data/google/` folders and read the given data into the program.  Then the data gets indexed and vectorized into a Chroma vector database.  The vectorization is done by a HuggingFace model that embeds the semantic meaning of text into the database.
-- **Storing**: The vector database is a Chromadb and is stored in `database/ folder`.  This database can then be searched through to find the nearest k-map of vectors from a query later on.
+- **Storing**: The vector database is a Chromadb and is stored in `database/folder`.  This database can then be searched through to find the nearest k-map of vectors from a query later on.
 ###### Retrievel Folder
 - `database_connector.py` handles vector similarity search.
 - The query is embedded and used to retrieve the top-k most relevant vectors using cosine similarity.
