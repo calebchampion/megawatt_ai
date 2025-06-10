@@ -63,7 +63,7 @@ Working on this...
 Working on this...
 
 ## Setup Instructions
-- Unzip slack data into data/update/slack folder and name `mw_slack`
+- Unzip slack data into data/slack folder and name `mw_slack`
 #### Updating data to the model
 - *Slack data*: Just unzip the slack zip file and place it in 'data/update/mw_slack' folder as labeled `mw_slack`.  Then exit out of the program and rerun the program, this will take a while (a couple minutes).  Last, **make sure to delete the `data/update/mw_slack` folder after the program has finished updating.**
 - *Google data*: 
