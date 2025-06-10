@@ -23,7 +23,7 @@ def main():
   '''
   parses and indexes into vector db if needed
   '''
-  if os.path.exists(os.path.join(DB_PATH, "chroma.sqlite3")): 
+  if os.path.exists(os.path.join(DB_PATH, "chroma.sqlite3")):
     print("\nDatabase already exists. Skipping indexing.\n")
 
   else: #make a database for it
