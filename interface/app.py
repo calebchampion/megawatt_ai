@@ -1,5 +1,5 @@
 '''
-app file that runs everything in a GUI application
+main file to run everything together
 '''
 
 import os
@@ -14,7 +14,7 @@ DB_PATH = "database"
 SLACK_PATH = "data/slack/mw"
 GOOGLE_PATH = "data/google/googledata"
 EMBEDDING_MODEL = HuggingFaceEmbeddings(model_name = "sentence-transformers/all-MiniLM-L6-v2")  #sentence-transformers/all-MiniLM-L6-v2
-LLM_MODEL = "qwen2.5:3b" 
+LLM_MODEL = "llama3.2" 
 
 #main
 def main():
@@ -42,10 +42,10 @@ def main():
       break
 
     top_k_results = RAG_searcher.search(query = query, top_k = 5) #searches and responds with top 10 k-map slack messages
-    #names
-    #print(f"\ntop 5 slack messages: \n\n{top_k_results}")
 
+    #names
     LLM.generate_with_context(query = query, recieved_data = top_k_results)
+
 
 #run
 if __name__ == "__main__":

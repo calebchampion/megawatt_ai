@@ -11,14 +11,15 @@ from pipeline.rag_engine import OllamaLLM
 
 #const
 DB_PATH = "database"
-SLACK_PATH = "data/slack/mw"
-GOOGLE_PATH = "data/google/googledata"
+SLACK_PATH = "data/slack/mw_slack"
+UPDATE_SLACK_PATH = "data/update/mw_slack"
+GOOGLE_PATH = "data/google/mw_google"
+UPDATE_GOOGLE_PATH = "data/update/mw_google"
 EMBEDDING_MODEL = HuggingFaceEmbeddings(model_name = "sentence-transformers/all-MiniLM-L6-v2")  #sentence-transformers/all-MiniLM-L6-v2
-LLM_MODEL = "llama3.2" 
+LLM_MODEL = "qwen2.5:3b" 
 
 #main
 def main():
-
   '''
   parses and indexes into vector db if needed
   '''
@@ -41,7 +42,7 @@ def main():
     if query.lower() == "exit":
       break
 
-    top_k_results = RAG_searcher.search(query = query, top_k = 5) #searches and responds with top 10 k-map slack messages
+    top_k_results = RAG_searcher.search(query = query, top_k = 10)  #searches and responds with top 10 k-map slack messages
 
     #names
     LLM.generate_with_context(query = query, recieved_data = top_k_results)
