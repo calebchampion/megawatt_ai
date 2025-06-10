@@ -57,16 +57,13 @@ This folder has subfolders and a rag engine to do the heavy lifting and computat
 - `rag_engine.py` connects everything: it receives a query, retrieves relevant context, and prompts the Ollama LLM to return a final answer.
 
 ### Interface Folder
-Flask and how it works
+Working on this...
 
 ### Deploy Folder
-Docker files and how it works
-```bash
-pip install -r requirements
-```
+Working on this...
+
 ## Setup Instructions
-- Unzip slack data into data/slack folder and label it "mw"
-- 
-#### Adding Data to the model
-- Slack data: 
-- Google data: 
+- Unzip slack data into data/update/slack folder and name `mw_slack`
+#### Updating data to the model
+- *Slack data*: Just unzip the slack zip file and place it in 'data/update/mw_slack' folder as labeled `mw_slack`.  Then exit out of the program and rerun the program, this will take a while (a couple minutes).  Last, **make sure to delete the `data/update/mw_slack` folder after the program has finished updating.**
+- *Google data*: 
