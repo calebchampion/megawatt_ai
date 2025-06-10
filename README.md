@@ -14,7 +14,7 @@
 **Tools Used**
 - **Embedding & Vector Store**: [HuggingFace Transformers](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2), [ChromaDB](https://www.trychroma.com/)
 - **RAG Orchestration**: [LangChain](https://www.langchain.com/)
-- **Local LLM**: [Ollama](https://ollama.com/) – LLaMA 3.2
+- **Local LLM**: [Ollama](https://ollama.com/)
 - **Backend**: [Flask](https://flask.palletsprojects.com/en/stable/)
 - **Deployment**: [Docker](https://www.docker.com/)
 
