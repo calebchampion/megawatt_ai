@@ -1,3 +1,8 @@
+'''
+Used re to change the slack names to actual names so the ai will have a
+better idea of who is saying what in the slack messages
+'''
+
 import re
 from typing import List, Dict
 
