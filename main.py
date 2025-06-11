@@ -16,7 +16,7 @@ UPDATE_SLACK_PATH = "data/update/mw_slack"
 GOOGLE_PATH = "data/google/mw_google"
 UPDATE_GOOGLE_PATH = "data/update/mw_google"
 EMBEDDING_MODEL = HuggingFaceEmbeddings(model_name = "sentence-transformers/all-MiniLM-L6-v2")  #sentence-transformers/all-MiniLM-L6-v2
-LLM_MODEL = "qwen2.5:3b" 
+LLM_MODEL = "gemma3:1b"  ## gemma3:1b   qwen2.5:3b   llama3.2
 
 #main
 def main():
@@ -38,11 +38,11 @@ def main():
   LLM = OllamaLLM(model = LLM_MODEL)  #pick from any model model = "llama3.2" as default, qwen2.5:3b
 
   while True:
-    query = input("\nWhat can I help you with? -> ")
+    query = input("\n\nWhat can I help you with? -> ")
     if query.lower() == "exit":
       break
 
-    top_k_results = RAG_searcher.search(query = query, top_k = 10)  #searches and responds with top 10 k-map slack messages
+    top_k_results = RAG_searcher.search(query = query, top_k = 15)  #searches and responds with top 10 k-map slack messages
 
     #names
     LLM.generate_with_context(query = query, recieved_data = top_k_results)
