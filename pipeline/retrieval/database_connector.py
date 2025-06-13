@@ -27,7 +27,8 @@ class VectorSearcher:
             }
           for doc in results
     ]  #returns a list of LangChain documents w/ .page_content and .metadata as i have described in slack_indexer
+    print(results)
+    print("\n\n\n\n\n\n\n\n\n")
+    Names(results).replace_IDs_w_names()  #replace user IDs with actual names in slack
 
-    n = Names(results).replace_IDs_w_names()
-    
     return results

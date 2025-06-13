@@ -1,7 +1,6 @@
 '''
 main file to run everything together
 '''
-
 import os
 from langchain_community.embeddings import HuggingFaceEmbeddings
 
@@ -11,7 +10,7 @@ from pipeline.rag_engine import OllamaLLM
 
 #const
 DB_PATH = "database"
-SLACK_PATH = "data/slack/mw_slack"
+SLACK_PATH = "data/slack/mwzipp.zip"
 UPDATE_SLACK_PATH = "data/update/mw_slack"
 GOOGLE_PATH = "data/google/mw_google"
 UPDATE_GOOGLE_PATH = "data/update/mw_google"
@@ -30,7 +29,6 @@ def main():
     indexer = SlackIndexer(slack_dir = SLACK_PATH, db_path = DB_PATH, embeddings = EMBEDDING_MODEL)  #optional chunk size and overlap parameters as well
     indexer.create_vector_store() # store the vector database
 
-
   '''
   query and prompt ai model
   '''
@@ -46,7 +44,6 @@ def main():
 
     #names
     LLM.generate_with_context(query = query, recieved_data = top_k_results)
-
 
 #run
 if __name__ == "__main__":

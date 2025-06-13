@@ -24,6 +24,7 @@ class Names:
       'U08T7KADB7B': 'Rudy', 
       'U0898JBANP6': 'Jason',
       'U030P58UAGK': 'Arniel', 
+      'U0898JBANP6': 'Jason'
     }
 
     def replace_mentions(text):
