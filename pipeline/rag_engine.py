@@ -23,6 +23,6 @@ class OllamaLLM:
             stream = False
         )
 
-        print("\n", response['message']['content'])
+        r = response['message']['content']#print("\n", response['message']['content'])
 
-        return
+        return r

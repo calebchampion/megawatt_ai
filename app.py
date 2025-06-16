@@ -3,7 +3,8 @@ main file to run everything together
 '''
 import os
 from langchain_community.embeddings import HuggingFaceEmbeddings
-#import streamlit as st
+import streamlit as st
+import time
 
 from pipeline.preprocessing.indexer import SlackIndexer, GoogleIndexer
 from pipeline.retrieval.database_connector import VectorSearcher
@@ -15,37 +16,55 @@ SLACK_PATH = "data/slack/mw_slack"
 UPDATE_SLACK_PATH = "data/update/mw_slack"
 GOOGLE_PATH = "data/google/mw_google"
 UPDATE_GOOGLE_PATH = "data/update/mw_google"
-EMBEDDING_MODEL = HuggingFaceEmbeddings(model_name = "sentence-transformers/all-MiniLM-L6-v2")  #sentence-transformers/all-MiniLM-L6-v2
+EMBEDDING_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"  #sentence-transformers/all-MiniLM-L6-v2
 LLM_MODEL = "gemma3:1b"  ## gemma3:1b   qwen2.5:3b   llama3.2
 
-#main
+# --- Cached resources ---
+@st.cache_resource
+def load_embeddings():
+    return HuggingFaceEmbeddings(model_name = EMBEDDING_MODEL_NAME)
+
+@st.cache_resource
+def load_searcher():
+    return VectorSearcher(db_path = DB_PATH, embeddings = load_embeddings())
+
+@st.cache_resource
+def load_llm():
+    return OllamaLLM(model = LLM_MODEL)
+
+#optional indexing if no DB exists
+def index_if_needed():
+    if not os.path.exists(os.path.join(DB_PATH, "chroma.sqlite3")):
+        st.info("No database found. Indexing Slack data now...")
+        indexer = SlackIndexer(slack_dir=SLACK_PATH, db_path=DB_PATH, embeddings=load_embeddings())
+        indexer.create_vector_store()
+    else:
+        st.success("Starting...")
+
+
+
+
+
+#main app UI
 def main():
-  '''
-  parses and indexes into vector db if needed
-  '''
-  if os.path.exists(os.path.join(DB_PATH, "chroma.sqlite3")):
-    print("\nDatabase already exists. Skipping indexing.\n")
+    st.set_page_config(page_title = "MW AI Assistant", layout = "wide")
+    st.title("🧠 Megawatt Assistant")
 
-  else: #make a database for it
-    indexer = SlackIndexer(slack_dir = SLACK_PATH, db_path = DB_PATH, embeddings = EMBEDDING_MODEL)  #optional chunk size and overlap parameters as well
-    indexer.create_vector_store() # store the vector database
+    index_if_needed()
 
-  '''
-  query and prompt ai model
-  '''
-  RAG_searcher = VectorSearcher(db_path = DB_PATH, embeddings = EMBEDDING_MODEL)   #classes objects so they dont load every time a questions asked
-  LLM = OllamaLLM(model = LLM_MODEL)  #pick from any model model = "llama3.2" as default, qwen2.5:3b
+    query = st.text_input("Ask a question", placeholder = "e.g., What does Wayne do?")
+    if st.button("Ask") and query:
+        searcher = load_searcher()
+        llm = load_llm()
 
-  while True:
-    query = input("\n\nWhat can I help you with? -> ")
-    if query.lower() == "exit":
-      break
+        with st.spinner("Searching knowledge base..."):
+            results = searcher.search(query=query, top_k=15)
 
-    top_k_results = RAG_searcher.search(query = query, top_k = 15)  #searches and responds with top 10 k-map slack messages
+        with st.spinner("Generating response..."):
+            answer = llm.generate_with_context(query = query, recieved_data = results)
 
-    #names
-    LLM.generate_with_context(query = query, recieved_data = top_k_results)
+        st.subheader("💬 AI Answer:")
+        st.write(answer)
 
-#run
 if __name__ == "__main__":
-  main()
+    main()
