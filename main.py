@@ -10,7 +10,7 @@ from pipeline.rag_engine import OllamaLLM
 
 #const
 DB_PATH = "database"
-SLACK_PATH = "data/slack/mwzipp.zip"
+SLACK_PATH = "data/slack/mw_slack"
 UPDATE_SLACK_PATH = "data/update/mw_slack"
 GOOGLE_PATH = "data/google/mw_google"
 UPDATE_GOOGLE_PATH = "data/update/mw_google"

@@ -30,7 +30,6 @@ class SlackIndexer:
       self.vectorstore = None  #vector database placeholder
 
 
-   '''
    #manual way to load in slack documents from unzipped folder
    def load_data(self) -> list[Document]:
       #loads Slack threads including replies from all channel folders inside slack_dir
@@ -81,7 +80,7 @@ class SlackIndexer:
 
       print(f"Loaded grouped {len(documents)} documents from Slack export.")
       return documents
-  
+   '''
    def create_vector_store(self) -> Chroma:
       #creates a Chroma vector store from the text chunks with semantic embedding model
       raw_documents = self.load_data()
