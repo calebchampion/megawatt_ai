@@ -4,7 +4,6 @@ main file to run everything together
 import os
 from langchain_community.embeddings import HuggingFaceEmbeddings
 import streamlit as st
-import time
 
 from pipeline.preprocessing.indexer import SlackIndexer, GoogleIndexer
 from pipeline.retrieval.database_connector import VectorSearcher
@@ -36,12 +35,11 @@ def load_llm():
 def index_if_needed():
     if not os.path.exists(os.path.join(DB_PATH, "chroma.sqlite3")):
         st.info("No database found. Indexing Slack data now...")
-        indexer = SlackIndexer(slack_dir=SLACK_PATH, db_path=DB_PATH, embeddings=load_embeddings())
+        indexer = SlackIndexer(slack_dir = SLACK_PATH, db_path = DB_PATH, embeddings = load_embeddings())
         indexer.create_vector_store()
+        st.success("✅ Indexing complete!")
     else:
         st.success("Starting...")
-
-
 
 
 
@@ -50,15 +48,19 @@ def main():
     st.set_page_config(page_title = "MW AI Assistant", layout = "wide")
     st.title("🧠 Megawatt Assistant")
 
-    index_if_needed()
 
-    query = st.text_input("Ask a question", placeholder = "e.g., What does Wayne do?")
-    if st.button("Ask") and query:
+    #  preload caches
+    with st.spinner("Initializing AI Assistant.. Don't refresh"):
+        load_embeddings()
+        index_if_needed()
         searcher = load_searcher()
         llm = load_llm()
 
+    query = st.text_input("Ask a question", placeholder = "e.g., What does Wayne do?")
+    if st.button("Ask") and query:
+
         with st.spinner("Searching knowledge base..."):
-            results = searcher.search(query=query, top_k=15)
+            results = searcher.search(query = query, top_k = 15)
 
         with st.spinner("Generating response..."):
             answer = llm.generate_with_context(query = query, recieved_data = results)
