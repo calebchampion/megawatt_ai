@@ -15,7 +15,7 @@
 - **Embedding & Vector Store**: [HuggingFace Transformers](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2), [ChromaDB](https://www.trychroma.com/)
 - **RAG Orchestration**: [LangChain](https://www.langchain.com/)
 - **Local LLM**: [Ollama](https://ollama.com/)
-- **Backend**: [Flask](https://flask.palletsprojects.com/en/stable/)
+- **UI**: [Streamlit](https://streamlit.io/)
 - **Deployment**: [Docker](https://www.docker.com/)
 
 ### Main File
@@ -57,13 +57,13 @@ This folder has subfolders and a rag engine to do the heavy lifting and computat
 - `rag_engine.py` connects everything: it receives a query, retrieves relevant context, and prompts the Ollama LLM to return a final answer.
 
 ### Interface Folder
-Working on this...
+Using [streamlit](https://streamlit.io/) to create a messaging interface.
 
 ### Deploy Folder
 Working on this...
 
 ## Setup Instructions
-- Unzip slack data into data/slack folder and name `mw_slack`
+- Unzip slack data into `data/slack` folder and name `mw_slack`
 #### Updating data to the model
-- *Slack data*: Just unzip the slack zip file and place it in 'data/update/mw_slack' folder as labeled `mw_slack`.  Then exit out of the program and rerun the program, this will take a while (a couple minutes).  Last, **make sure to delete the `data/update/mw_slack` folder after the program has finished updating.**
+- *Slack data*: Just unzip the slack zip file and place it in 'data/update/mw_slack' folder as labeled `mw_slack`.  Then exit quit and rerun the program, this will take a while (a couple minutes).  Last, **make sure to delete the `data/update/mw_slack` folder after the program has finished updating.**
 - *Google data*: 
