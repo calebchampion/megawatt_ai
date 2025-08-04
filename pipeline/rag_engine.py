@@ -24,5 +24,5 @@ class OllamaLLM:
         )
 
         r = response['message']['content']#print("\n", response['message']['content'])
-
+        print(r)
         return r

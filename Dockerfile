@@ -1,17 +1,15 @@
-FROM python:3.13
+FROM python:3.13.3
 
-WORKDIR /app
+WORKDIR /AI_MegawattS
 
 COPY requirements.txt .
-
-# upgrade pip only
+#run dependancies first before copying over the rest of the app
 RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
 
-# run dependancies first before copying over the rest of the app
-RUN pip install --no-cache-dir -r requirements.txt
+#copy rest of app
+COPY . ./
 
-# copy rest of app
-COPY . .
-
-# commands
-CMD ["python", "deploy/run_chatbot.py"]
+#commands
+EXPOSE 8501
+CMD ["streamlit", "run", "AI_Megawatt/app.py", "--server.port", "8501"] 

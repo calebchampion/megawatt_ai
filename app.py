@@ -49,8 +49,8 @@ def main():
     st.title("🧠 Megawatt Assistant")
 
 
-    #  preload caches
-    with st.spinner("Initializing AI Assistant.. Don't refresh"):
+    # preload caches
+    with st.spinner("Initializing AI Assistant... Don't refresh"):
         load_embeddings()
         index_if_needed()
         searcher = load_searcher()
