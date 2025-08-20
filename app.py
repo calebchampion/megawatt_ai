@@ -60,7 +60,7 @@ def index_if_needed():
 #main app UI
 def main():
     st.set_page_config(page_title = "MW AI Assistant", layout = "wide")
-    st.title("🧠 Megawatt Bitcoin Mining Assistant")
+    st.title("🧠 Megawatt Assistant")
 
 
     # preload caches
