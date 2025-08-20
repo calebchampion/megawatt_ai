@@ -67,7 +67,7 @@ This folder has subfolders and a rag engine to do the heavy lifting and computat
 - `rag_engine.py` connects everything: it receives a query, retrieves relevant context, and prompts the Ollama LLM to return a final answer.
 
 ## Initial Setup Instructions (Already Done)
-- Download ollama
+- Download ollama, and run ```ollama pull gemma3:1b```
 - Unzip slack data into `data/slack` folder and name `mw_slack`
 - Run the command ```pip install -r requirements.txt```
 - In the termimal of the project, place the command ```streamlit run app.py```, this will take a while to start up the first time you do it ~10 min, and less time to initially start up after that.
@@ -76,6 +76,7 @@ This folder has subfolders and a rag engine to do the heavy lifting and computat
 - Log into the ubuntu computer, username > megawatt, password > megawatt
 - Go to folder `AI_Project` and run command in the terminal ```streamlit run app.py```
 - This will update everthing and launch a local web address to the AI model.
+- Now you can go to that web ip address to access the model from any machine.
 
 #### Updating data to the model
 *Slack data*
