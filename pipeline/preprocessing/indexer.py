@@ -103,7 +103,7 @@ class TxtIndexer:
    #indexes txt info for updates
    def __init__(self, txt_dir: str, update_dir: str, db_path: str,
                embeddings: str, #model from huggingface, (text->vector) with semantic meaning
-               chunk_size: int = 150,  #customizable
+               chunk_size: int = 200,  #customizable
                chunk_overlap: int = 50  #customizable
                ):
 

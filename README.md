@@ -16,23 +16,33 @@
 - **RAG Orchestration**: [LangChain](https://www.langchain.com/)
 - **Local LLM**: [Ollama](https://ollama.com/)
 - **UI**: [Streamlit](https://streamlit.io/)
-- **Deployment**: [Docker](https://www.docker.com/)
 
 ### Main File
-The `main.py` file runs everything together.
+The `app.py` file runs everything together.
 There are initial constants at the beginning of the file like the database, slack, and google path.  These are used throughout, so they are easy to reconfigure.  The embedding model is also listed here and can be changed easily as well.  (Take note if the embedding model changes, it may require you to also recalculate the entire database).  I've listed the classes I've made and used here in the main file.
-- **Indexer**
+- **Indexer** : Indexes and places the slack & text data into the database.
 ```python
 class SlackIndexer:
    def __init__(self,
                slack_dir: str,
                db_path: str,
                embeddings,
-               chunk_size: int = 1000,
+               chunk_size: int = 800,
                chunk_overlap: int = 200
                ):
 ```
-- **Database Connector**
+```python
+class TxtIndexer:
+   def __init__(self,
+              txt_dir: str,
+              update_dir: str,
+              db_path: str,
+              embeddings: str,
+              chunk_size: int = 200, 
+              chunk_overlap: int = 50  
+              ):
+```
+- **Database Connector** : Searches through the database to find best material for the LLM.
 ```python
 class VectorSearcher:
   def __init__(self,
@@ -40,10 +50,10 @@ class VectorSearcher:
               embeddings
               ):
 ```
-- **RAG Engine**
+- **RAG Engine** : Connects everything together with the LLM.
 ```python
 class OllamaLLM:
-    def __init__(self, model: str = "llama3.2"):
+    def __init__(self, model: str = "gemma3:1b"):
 ```
 ### Pipeline Folder
 This folder has subfolders and a rag engine to do the heavy lifting and computation of the chatbot.
@@ -56,14 +66,24 @@ This folder has subfolders and a rag engine to do the heavy lifting and computat
 ###### RAG Engine File
 - `rag_engine.py` connects everything: it receives a query, retrieves relevant context, and prompts the Ollama LLM to return a final answer.
 
-### Interface Folder
-Using [streamlit](https://streamlit.io/) to create a messaging interface.
-
-### Deploy Folder
-Working on this...
-
-## Setup Instructions
+## Initial Setup Instructions (Already Done)
+- Download ollama
 - Unzip slack data into `data/slack` folder and name `mw_slack`
+- Run the command ```pip install -r requirements.txt```
+- In the termimal of the project, place the command ```streamlit run app.py```, this will take a while to start up the first time you do it ~10 min, and less time to initially start up after that.
+
+## Setup
+- Log into the ubuntu computer, username > megawatt, password > megawatt
+- Go to folder `AI_Project` and run command in the terminal ```streamlit run app.py```
+- This will update everthing and launch a local web address to the AI model.
+
 #### Updating data to the model
-- *Slack data*: Just unzip the slack zip file and place it in 'data/update/mw_slack' folder as labeled `mw_slack`.  Then exit quit and rerun the program, this will take a while (a couple minutes).  Last, **make sure to delete the `data/update/mw_slack` folder after the program has finished updating.**
-- *Google data*: 
+*Slack data*
+- Just unzip the slack zip file and place it in `data/slack` folder as labeled `mw_slack`.
+- Then delete all the files from the `database` folder.
+- Rerun the program with ```streamlit run app.py```, this will take a while.
+
+
+*Text data*:
+- Restart the computer so the program is not running, make a text document in `data/update` then add whatever you want to it.
+- Run the program by ```streamlit run app.py```, and it will automatically update, run the model, & delete the text file when it's done.
