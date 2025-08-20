@@ -5,20 +5,20 @@ using huggingface model, the stores the vectors in chroma
 '''
 import os
 import json
-from typing import List, Dict
+#from typing import List, Dict
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 #from langchain_community.embeddings import HuggingFaceEmbeddings  #this model will eventually be updated to from fromlangchain_huggingface import HuggingFaceEmbeddings
 #nothing else will change in the code
 from langchain_community.vectorstores import Chroma #same with Chroma, it will throw a warning to a new model, it should be langchain-Chroma in the future
 from langchain_core.documents import Document
-from langchain_community.document_loaders import SlackDirectoryLoader
-from collections import defaultdict
+#from langchain_community.document_loaders import SlackDirectoryLoader
+#from collections import defaultdict
 
 class SlackIndexer:
    #class for slack messages
    def __init__(self, slack_dir: str, db_path: str,
                embeddings, #model from huggingface, (text->vector) with semantic meaning
-               chunk_size: int = 1000,  #customizable
+               chunk_size: int = 500,  #customizable
                chunk_overlap: int = 200  #customizable
                ):
 
@@ -81,6 +81,7 @@ class SlackIndexer:
       print(f"Loaded grouped {len(documents)} documents from Slack export.")
       return documents
    '''
+
    def create_vector_store(self) -> Chroma:
       #creates a Chroma vector store from the text chunks with semantic embedding model
       raw_documents = self.load_data()
@@ -97,18 +98,72 @@ class SlackIndexer:
       print(f"Vector store created and saved to {self.db_path}")
 
       return
+   
+class TxtIndexer:
+   #indexes txt info for updates
+   def __init__(self, txt_dir: str, update_dir: str, db_path: str,
+               embeddings: str, #model from huggingface, (text->vector) with semantic meaning
+               chunk_size: int = 150,  #customizable
+               chunk_overlap: int = 50  #customizable
+               ):
 
-
-
-class GoogleIndexer:
-   #class for google emails
-   def __init__(self, google_dir: str, db_path: str, embeddings, chunk_size: int = 1000, chunck_overlap: int = 200):
-      self.google_dir = google_dir
+      self.txt_dir = txt_dir
+      self.update_dir = update_dir
       self.db_path = db_path
-      self.embeddings = embeddings
       self.chunk_size = chunk_size
-      self.chunk_overlap = chunck_overlap
-      self.vector_store = None
+      self.chunk_overlap = chunk_overlap
+      self.embeddings = embeddings
+      self.vectorstore = None  #vector database placeholder
 
-   def add_vector_store(self):
-      pass
+   def chunk_text(self, text, source_name):
+      splitter = RecursiveCharacterTextSplitter(
+            chunk_size = self.chunk_size,
+            chunk_overlap = self.chunk_overlap,
+            length_function = len,
+            separators = ["\n\n", "\n"]
+            )
+      chunks = splitter.split_text(text)
+      return [Document(page_content = chunk, metadata = {"source": source_name}) for chunk in chunks]
+   
+   def init_txt_file(self):
+      # load DB
+      db = Chroma(persist_directory = self.db_path, embedding_function = self.embeddings)
+
+      # loop through .txt files
+      for filename in os.listdir(self.txt_dir):
+         if filename.endswith(".txt"):
+            filepath = os.path.join(self.txt_dir, filename)
+            with open(filepath, "r", encoding = "utf-8") as f:
+               content = f.read()
+
+            # langchain doc
+            docs = self.chunk_text(content, filename)
+                
+            # add to db
+            db.add_documents(docs)
+            
+      # persist changes
+      db.persist()
+
+   def add_text_files(self):
+      # load DB
+      db = Chroma(persist_directory = self.db_path, embedding_function = self.embeddings)
+
+      # loop through .txt files
+      for filename in os.listdir(self.update_dir):
+         if filename.endswith(".txt"):
+            filepath = os.path.join(self.update_dir, filename)
+            with open(filepath, "r", encoding = "utf-8") as f:
+               content = f.read()
+
+            # langchain doc
+            docs = self.chunk_text(content, filename)
+                
+            # add to db
+            db.add_documents(docs)
+            
+            # del update files after
+            os.remove(filepath)
+
+            # persist changes
+      db.persist()

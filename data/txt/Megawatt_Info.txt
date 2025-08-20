@@ -1,0 +1,13 @@
+Megawatt is a Bitcoin Mining Company with headquarters in Carmel, IN.  We have a site in Alexandria and one in Pierceton.
+Ilya Rekhter is the CEO.
+Dean Collier is Director of Finance & Infrastructure.
+Patrick McLaughlin is Director of technology & software.
+Wayne Highfield is Director of Operations.
+Mikala is site lead of Pierceton.
+Alex Phillips is site lead of Alexandria.
+Arniel Sia is CPA that works with Megawatt and for his own Company.
+Jason is a retired tech & IT knowledgebase for Megawatt.
+Rudy is a vibe coder for Megawatt working on the dashboard.
+Steven is Megawatt's advertising and marketing director.
+Megawatt uses Ramp to do employee reimbursements.
+Megawatt uses Fullstack to do Payroll, Benefits, and HR.
