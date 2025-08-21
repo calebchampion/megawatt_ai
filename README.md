@@ -66,20 +66,20 @@ This folder has subfolders and a rag engine to do the heavy lifting and computat
 ###### RAG Engine File
 - `rag_engine.py` connects everything: it receives a query, retrieves relevant context, and prompts the Ollama LLM to return a final answer.
 
-## Installation on Computer (Already Done)
+## Installation on Computer (**Already Done**)
 - Assuming pip, python, venv, & program folders are on computers
 - Virtual environment (venv) is already set up
 - Download ollama, and run ```ollama run gemma3:1b```
 - Unzip slack data into `data/slack` folder and name `mw_slack`
 - Activate the venv already on project by running the command```source venv/bin/activate``` under the `AI_Project folder`
 - In the venv run the command ```pip install -r requirements.txt```
-- In the termimal of the project with the venv activated, place the command ```streamlit run app.py```, this will take a while to start up the first time you do it ~10 min, and less time to initially start up after that.
+- In the termimal of the project with the venv activated, place the command ```streamlit run app.py```, this will take a while to start up the first time you do it ~20 min.  After the first setup, it should only take a few seconds once the program is started to be able to ask a question.
 
-## Setup
+## Starting & Setup (If it's restarted)
 - Log into the ubuntu computer, username > megawatt, password > megawatt
 - Go to folder `AI_Project` and run command in the terminal ```source venv/bin/activate``` and then ```streamlit run app.py```
 - This will update everthing and launch a local web address to the AI model.
-- Now you can go to that web IP address to access the model from any machine.
+- Now you can go to that web IP address to access the model from any machine on that network.
 
 #### Updating data to the model
 *Slack data*
@@ -87,7 +87,8 @@ This folder has subfolders and a rag engine to do the heavy lifting and computat
 - Then delete all the files from the `database` folder.
 - Rerun the program with ```streamlit run app.py```, this will take a while.
 
-
 *Text data*:
-- Restart the computer so the program is not running, make a text document in `data/update` then add whatever you want to it.
-- Run the program by ```streamlit run app.py```, and it will automatically update, run the model, & delete the text file when it's done.
+- Stop the program if it is running, make a text document in `data/update` then add whatever you want to it.
+- It works best by giving it a generic question, then answering the question.  It is indexed by a new line, so after every question and answer, just hit enter once or twice then start another question and answer.
+- It also currently works best with each question & answer being under 250 characters long, so nothing much longer than that.
+- Run the program by ```streamlit run app.py```, and it will automatically update, run the model, & delete the text file when it's done.  You can add multiple text files and or Q&A per text file, it works the same.  It will automatically delete the text files once its updated.
