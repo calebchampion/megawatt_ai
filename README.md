@@ -73,13 +73,13 @@ This folder has subfolders and a rag engine to do the heavy lifting and computat
 - Unzip slack data into `data/slack` folder and name `mw_slack`
 - Activate the venv already on project by running the command```source venv/bin/activate``` under the `AI_Project folder`
 - In the venv run the command ```pip install -r requirements.txt```
-- In the termimal of the project, place the command ```streamlit run app.py```, this will take a while to start up the first time you do it ~10 min, and less time to initially start up after that.
+- In the termimal of the project with the venv activated, place the command ```streamlit run app.py```, this will take a while to start up the first time you do it ~10 min, and less time to initially start up after that.
 
 ## Setup
 - Log into the ubuntu computer, username > megawatt, password > megawatt
-- Go to folder `AI_Project` and run command in the terminal ```streamlit run app.py```
+- Go to folder `AI_Project` and run command in the terminal ```source venv/bin/activate``` and then ```streamlit run app.py```
 - This will update everthing and launch a local web address to the AI model.
-- Now you can go to that web ip address to access the model from any machine.
+- Now you can go to that web IP address to access the model from any machine.
 
 #### Updating data to the model
 *Slack data*

@@ -6,7 +6,7 @@
 from ollama import chat
 
 class OllamaLLM:
-    def __init__(self, model: str = "llama3.2"):
+    def __init__(self, model: str = "gemma3:1b"):
         self.model = model
 
     def generate_with_context(self, query: str, recieved_data: list[str]):
@@ -23,6 +23,6 @@ class OllamaLLM:
             stream = False
         )
 
-        r = response['message']['content']#print("\n", response['message']['content'])
-        print(r)
+        r = response['message']['content']  #print("\n", response['message']['content'])
+
         return r
