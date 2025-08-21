@@ -66,10 +66,13 @@ This folder has subfolders and a rag engine to do the heavy lifting and computat
 ###### RAG Engine File
 - `rag_engine.py` connects everything: it receives a query, retrieves relevant context, and prompts the Ollama LLM to return a final answer.
 
-## Initial Setup Instructions (Already Done)
-- Download ollama, and run ```ollama pull gemma3:1b```
+## Installation on Computer (Already Done)
+- Assuming pip, python, venv, & program folders are on computers
+- Virtual environment (venv) is already set up
+- Download ollama, and run ```ollama run gemma3:1b```
 - Unzip slack data into `data/slack` folder and name `mw_slack`
-- Run the command ```pip install -r requirements.txt```
+- Activate the venv already on project by running the command```source venv/bin/activate``` under the `AI_Project folder`
+- In the venv run the command ```pip install -r requirements.txt```
 - In the termimal of the project, place the command ```streamlit run app.py```, this will take a while to start up the first time you do it ~10 min, and less time to initially start up after that.
 
 ## Setup
